@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:3.6.2
+    restart: always
+  redis:
+    image: redis:alpine
+  movies:
+    build: ./server/services/movies
+    ports:
+      - 3005:3005
+    depends_on:
+      - mongo
+    environment:
+      DB_URL: mongodb://mongo:27017/
+      dbName: 'MoviesDB'
+  tv-series:
+    build: ./server/services/tv-series
+    ports:
+      - 3010:3010
+    depends_on:
+      - mongo
+    environment:
+      DB_URL: mongodb://mongo:27017/
+      dbName: 'TVSeriesDB'
+  orchestrators:
+    build: ./server/orchestrators/graphql
+    ports:
+      - 5010:5010
+    depends_on:
+      - redis
+      - tv-series
+      - movies
+    environment:
+      REDIS_URL: redis://redis:6379/
+      MOVIE_URL: http://movies:3005/movies
+      TVSERIES_URL: http://tv-series:3010/series
+  client:
+    build: ./client
+    ports:
+      - 5000:5000
