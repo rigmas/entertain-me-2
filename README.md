@@ -1,6 +1,6 @@
 # entertain-me
 
-Written by Samuel Girsang
+Written by Samuel Girsang, October 8th 2020
 
 PORT API
 
